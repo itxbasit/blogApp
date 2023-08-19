@@ -1,0 +1,285 @@
+* {
+  margin: 0;
+  font-family: inter;
+}
+
+
+.reg-frame {
+  background-color: rgb(235, 235, 235);
+}
+
+#signUp,
+#signIn,
+#publish {
+  background-color: rgb(132, 0, 255);
+  border: none;
+}
+
+*input:focus {
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgb(132, 0, 255);
+}
+
+#firstName:focus,
+#lastName:focus,
+#email:focus,
+#password:focus,
+#repeatPassword:focus,
+#signEmail:focus,
+#signPassword:focus,
+#old-password:focus,
+#new-password:focus,
+#repeat-password:focus,
+#msg:focus,
+#placeHold:focus {
+  outline: none;
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgb(132, 0, 255);
+}
+
+#msg {
+  resize: none;
+}
+
+.header {
+  border-bottom: 1px solid var(--gray-300, #DEE2E6);
+  background: var(--default-white, #FFF);
+
+}
+
+.sub-heading {
+  background-color: rgb(132, 0, 255);
+  height: 3rem;
+  display: flex;
+  padding: 0rem 7rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-heading p,
+.sub-heading a {
+  margin: 0.6em 0;
+  color: #FFF;
+}
+
+a {
+  text-decoration: none;
+}
+
+.sub-heading a {
+  font-family: Inter;
+  font-size: 1.125rem;
+  text-decoration: none;
+}
+
+.sub-heading p {
+  font-family: Inter;
+  font-size: 1.4rem;
+  font-weight: bolder;
+}
+
+.heading1 {
+  display: flex;
+}
+
+.heading {
+  margin-left: 5.75rem;
+  padding: 1.25rem;
+  font-family: Inter;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: -0.05rem;
+}
+
+.headingPro {
+  margin-left: 6rem;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  font-family: Inter;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: -0.05rem;
+}
+
+#name, #nameProfile {
+  font-family: Inter;
+  margin-right: 1rem;
+  font-size: 1.125rem;
+  color: white;
+}
+
+.contain {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  background-color: #fff;
+  display: block;
+  padding: 1rem;
+  width: 30rem;
+  border-radius: 0.5rem;
+  box-shadow: 0px 20px 15px 10px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+
+}
+
+.form-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  color: #000;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+}
+
+.input-container input,
+.form button {
+  outline: none;
+  border: 1px solid #e5e7eb;
+  margin: 8px 0;
+}
+
+.input-container input {
+  background-color: #fff;
+  padding: 0.5rem;
+  padding-right: 3rem;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  width: 300px;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.submit {
+  display: block;
+  position: left;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  background-color: rgb(132, 0, 255);
+  color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  width: 40%;
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+  margin: 2rem 0 2rem rem !important;
+}
+
+.signup-link {
+  color: #6B7280;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+.signup-link a {
+  text-decoration: underline;
+}
+
+input:focus {
+  border: 3px solid #5227CC;
+}
+
+svg {
+  cursor: pointer;
+  margin: 0.5rem;
+  size: 2rem
+}
+
+.pic {
+  margin: 2rem 1rem;
+  position: relative;
+  height: 10rem;
+  width: 11rem;
+  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.35);
+  border-radius: 1.85rem;
+}
+
+.pic>img {
+  height: 9rem;
+  width: 10rem;
+  top: 0.5rem;
+  border-radius: 1.85rem;
+}
+
+#blogProfile {
+  height: 4rem;
+  width: 4rem;
+}
+
+#blogPara {
+  color: var(--gray-900, #212529);
+  font-family: Inter;
+  font-size: 1rem;
+  width: 15rem;
+  margin-left: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.pointer {
+  position: absolute;
+  top: 3.7rem;
+  right: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+.contain {
+  background-color: rgb(235, 235, 235);
+}
+#logOut{
+  cursor: pointer;
+  color: white
+}
+
+#changeName {
+  background-color: none;
+  border: none;
+  background: none;
+  color: #000;
+  font-family: inter;
+  width: 21rem;
+}
+
+.blogHeading {
+  margin: -8rem 7.5rem;
+  color: #000;
+  font-weight: bolder;
+}
+
+.blog {
+  display: flex;
+}
+.sub-blog{
+  display: flex;
+  margin-top: -1rem;
+  margin-left: 1rem;
+}
+.buttonBlog button{
+  border: none;
+  background: none;
+  color: var(--primary-color, #7749F8);
+  font-family: Inter;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.75rem; /* 175% */
+}
