@@ -1,5 +1,5 @@
 import { app, db, auth, storage } from './firebase.js'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword,updatePassword,signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
 import {
   doc,
   setDoc,
@@ -24,16 +24,16 @@ const password = document.getElementById("password");
 const repPass = document.getElementById("repeatPassword")
 const signUp = document.getElementById("signUp")
 const name = document.getElementById("name")
-
+let paswd = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.-*\s).{8,35}$/
 signUp?.addEventListener("click", (e) => {
   e.preventDefault();
   let lengthFirstName = firstName.value;
   let lenLastName = lastName.value
   let fullName = `${firstName.value} ${lastName.value}`;
-  let repeatPassword = document.getElementById("repeatPassword")
-  let password = document.getElementById("password")
-  if ((lengthFirstName.length >= 3 && lengthFirstName.length <= 20) && lenLastName.length >= 1 && lenLastName.length <= 20) {
-    if(repeatPassword.value === password.value){
+
+  const repeatPassword = document.getElementById("repeatPassword")
+  const password = document.getElementById("password")
+  if ((lengthFirstName.length >= 3 && lengthFirstName.length <= 20) && (lenLastName.length >= 1 && lenLastName.length <= 20) && (repeatPassword.value === password.value) && (password.value.match(paswd))) {
     createUserWithEmailAndPassword(auth, email.value, password.value)
       .then(async (userCredential) => {
         try {
@@ -46,11 +46,22 @@ signUp?.addEventListener("click", (e) => {
             icon: 'success',
             title: 'User Registered Successfully',
           })
+          localStorage.setItem("password", password.value)
           localStorage.setItem("uid", user.uid)
           location.href = "profile.html";
           name.innerHTML = fullName;
-
+          firstName.value = "";
+          lastName.value = "";
+          email.value = "";
+          repeatPassword.value = "";
+          password.value = "";
+          name.value = ""
         } catch (e) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: e,
+          })
         }
       })
 
@@ -63,7 +74,13 @@ signUp?.addEventListener("click", (e) => {
           text: errorMessage,
         })
       });
-    }
+  }
+  else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'First name contain atleast 3 words\nLast name contains atleast 1 words\nPassword contain atleast 8 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character',
+    })
   }
 })
 
@@ -82,7 +99,11 @@ sigIn?.addEventListener("click", () => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
-      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessage,
+      })
     });
 })
 
@@ -174,27 +195,31 @@ fileInput?.addEventListener("change", async () => {
 
 const updateProfile = document.getElementById("update");
 const userProfile = document.getElementById("userProfile")
- const nameProfile = document.getElementById("nameProfile")
+const nameProfile = document.getElementById("nameProfile")
 
 
-  updateProfile?.addEventListener("click", async () => {
-    let uid = localStorage.getItem("uid");
-    let oldpass=document.getElementById("old-password")
-    let newPass=document.getElementById("new-password")
-    const password = (localStorage.getItem('password'));
-    console.log("click")
-    
-    if(password===oldpass.value){
-        const user = auth.currentUser;
-        const newPassword = newPass.value;
+updateProfile?.addEventListener("click", async () => {
+  let uid = localStorage.getItem("uid");
+  let oldpass = document.getElementById("old-password")
+  let newPass = document.getElementById("new-password")
+  let repeatPassword = document.getElementById("repeat-password")
+  const password = (localStorage.getItem('password'));
+
+  if (password === oldpass.value && newPass.value.match(paswd) && newPass.value === repeatPassword.value) {
+    const user = auth.currentUser;
+    const newPassword = newPass.value;
 
     updatePassword(user, newPassword).then(() => {
-        console.log("password updated")
-        localStorage.setItem("password", newPass.value)
-        }).catch((error) => {
-    }); 
-  }
-  let nameProfile = document.getElementById("name")
+      console.log("password updated")
+      localStorage.setItem("password", newPass.value)
+    }).catch((error) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error,
+      });
+    });
+    let nameProfile = document.getElementById("name")
     if (fileInput.files[0]) {
       const imageUrl = await uploadFile(fileInput.files[0]);
       const washingtonRef = doc(db, "signUpUsers", uid);
@@ -212,10 +237,18 @@ const userProfile = document.getElementById("userProfile")
       icon: "success",
       title: "User updated successfully",
     });
-  });
-  const uid = localStorage.getItem("uid");
-  if(uid){
-    const docRef = doc(db, "signUpUsers", uid);
+  }
+  else {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Password contain atleast 8 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character and must be match with repeat password",
+    });
+  }
+});
+const uid = localStorage.getItem("uid");
+if (uid) {
+  const docRef = doc(db, "signUpUsers", uid);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     if (location.pathname === "/profile.html") {
@@ -232,70 +265,74 @@ const userProfile = document.getElementById("userProfile")
       }
     }
   } else {
-    // docSnap.data() will be undefined in this case
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Something went wrong\nTry again!",
+    });
+  }
+}
+
+
+
+function formatAMPM(date) {
+  let current = date.toJSON();
+  let currentDate = current.slice(0, 10);
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  var strTime = hours + ":" + minutes + " " + ampm;
+  return `${currentDate}, ${strTime}`;
+}
+const addBtn = document.getElementById("add")
+const placeHold = document.getElementById("placeHold")
+addBtn?.addEventListener("click", async () => {
+  try {
+    let text = document.getElementById("msg");
+    let textValue = text.value.trim();
+    let da = formatAMPM(new Date());
+    if (textValue == "" || placeHold.value == "") {
+      alert("Please write some thing at text field");
+    } else {
+      const docRef = await addDoc(collection(db, "blogsValues"), {
+        uid,
+        titel: placeHold.value,
+        value: textValue,
+        time: da,
+      });
+    }
+  } catch (err) {
     console.log();
   }
-  }
-  
-
-
-  function formatAMPM(date) {
-    let current = date.toJSON();
-    let currentDate = current.slice(0, 10);
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    var strTime = hours + ":" + minutes + " " + ampm;
-    return `${currentDate}, ${strTime}`;
-  }
-  const addBtn = document.getElementById("add")
-  const placeHold = document.getElementById("placeHold")
-  addBtn?.addEventListener("click", async()=> {
-    console.log("hhhh")
-    try {
-      let text = document.getElementById("msg");
-      let textValue = text.value.trim();
-      let da = formatAMPM(new Date());
-      if (textValue == "" || placeHold.value == "") {
-        alert("Please write some thing at text field");
-      } else {
-        const docRef = await addDoc(collection(db, "blogsValues"), {
-          titel: placeHold.value,
-          value: textValue,
-          time: da,
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  })
+})
 
 
 let arr = [];
 let nameBlog = document.getElementById("name")
 const getTodos = () => {
-  try{
-  var text = document.getElementById("msg");
-  var list = document.getElementById("list");
-  let textValue = text.value.trim();
-  onSnapshot(collection(db, "blogsValues"), (data) => {
-    data.docChanges().forEach(async(change) => {
-      arr.push(change.doc.id);
-      if (change.type == "removed") {
-        let d = document.getElementById(change.doc.id);
-        d.remove();
-      } else if (change.type == "added") {
-        const uid = localStorage.getItem("uid");
-        const docRef = doc(db, "signUpUsers", uid);
-        const docSnap = await getDoc(docRef);
-        name.innerHTML = docSnap.data().name;
-        if (docSnap.exists()) {
-          list.insertAdjacentHTML(
-            "afterbegin",
-            `<li id="${change.doc.id}">
+  try {
+    var text = document.getElementById("msg");
+    var list = document.getElementById("list");
+    let textValue = text.value.trim();
+    onSnapshot(collection(db, "blogsValues"), (data) => {
+      data.docChanges().forEach(async (change) => {
+        arr.push(change.doc.id);
+        if (change.type == "removed") {
+          let d = document.getElementById(change.doc.id);
+          d.remove();
+        } else if (change.type == "added") {
+          const uid = localStorage.getItem("uid");
+          const docRef = doc(db, "signUpUsers", uid);
+          const docSnap = await getDoc(docRef);
+          name.innerHTML = docSnap.data().name;
+
+          if (docSnap.exists() && change.doc.data().uid === uid) {
+            list.insertAdjacentHTML(
+              "afterbegin",
+              `<li id="${change.doc.id}">
             <div class="mt-4 justify-content-center login-container">
                 <div class="col-md-4">
                     <div class="card form" style="width: 70rem;">
@@ -316,31 +353,29 @@ const getTodos = () => {
                                     <textarea placeholder="" id="msgBlog" cols="128" rows="5" disabled>${change.doc.data().value}</textarea>
                                 </div>
                                 <div class="buttonBlog">
-                                    <button onclick='deleteBtn("${
-                                      change.doc.id
-                                    }")'>Delete</button>
-                                    <button id="editBtn" onclick='editBtn(this,"${
-                                      change.doc.id
-                                    }")'>Edit</button>
+                                    <button onclick='deleteBtn("${change.doc.id
+              }")'>Delete</button>
+                                    <button id="editBtn" onclick='editBtn(this,"${change.doc.id
+              }")'>Edit</button>
                                 </div>
                         </div>
                     </div>
                 </div>
             </div>
         </li>`
-          );
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log();
+            );
+          } else {
+            // docSnap.data() will be undefined in this case
+            console.log();
+          }
         }
-      }
-      text.value = "";
-      placeHold.value = "";
+        text.value = "";
+        placeHold.value = "";
+      });
     });
-  });
-}catch(e){
+  } catch (e) {
 
-}
+  }
 };
 getTodos();
 
@@ -365,25 +400,6 @@ const editBtn = async (e, id) => {
     editVal = true;
   }
 };
-onAuthStateChanged(auth, (user) => {
-  const uid = localStorage.getItem("uid");
-  if (user && uid) {
-
-    if (
-      location.pathname !== "/profile.html" &&
-      location.pathname !== "/blog.html"
-    ) {
-      location.href = "profile.html";
-    }
-  } else {
-    if (
-      location.pathname !== "/index.html" &&
-      location.pathname !== "/signIn.html"
-    ) {
-      location.href = "index.html";
-    }
-  }
-});
 
 
 const logoutBtn = document.getElementById("logOut")
